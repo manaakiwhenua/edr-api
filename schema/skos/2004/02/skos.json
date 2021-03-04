@@ -1,0 +1,604 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://data.scinfo.org.nz/def/skos/2004/02/schema",
+    "title": "SKOS JSON-LD Schema",
+    "description": "Definitions of SKOS resources as JSON-LD.",
+    "oneOf": [
+        {
+            "$ref": "#/definitions/_Concept"
+        },
+        {
+            "$ref": "#/definitions/_ConceptScheme"
+        },
+        {
+            "$ref": "#/definitions/_Collection"
+        },
+        {
+            "$ref": "#/definitions/_OrderedCollection"
+        },
+        {
+            "$ref": "#/definitions/_Container"
+        }
+    ],
+    "definitions": {
+        "_internationalizedString": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "required": [
+                "@value"
+            ],
+            "properties": {
+                "@value": {
+                    "type": "string"
+                },
+                "@language": {
+                    "type": "string",
+                    "default": "en"
+                }
+            }
+        },
+        "_internationalizedStringArray": {
+            "type": [
+                "null",
+                "array"
+            ],
+            "items": [
+                {
+                    "$ref": "#/definitions/_internationalizedString"
+                }
+            ]
+        },
+        "_@context": {
+            "type": "array",
+            "$comment": "@context is an array for constency with other schema that may refer to more than one context.",
+            "items": [
+                {
+                    "type": "string",
+                    "format": "uri",
+                    "const": "http://data.scinfo.org.nz/def/skos/2004/02/context"
+                }
+            ]
+        },
+        "_@id": {
+            "type": "string",
+            "format": "uri"
+        },
+        "_ConceptRef": {
+            "title": "SKOS Concept reference",
+            "description": "A reference to another SKOS Concept.",
+            "type": "object",
+            "required": [
+                "@id",
+                "@type"
+            ],
+            "properties": {
+                "@id": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "@type": {
+                    "type": "string",
+                    "format": "uri",
+                    "const": "skos:Concept"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                }
+            }
+        },
+        "_ConceptSchemeRef": {
+            "title": "SKOS Concept Scheme reference",
+            "description": "A reference to another SKOS Concept Scheme.",
+            "type": "object",
+            "required": [
+                "@id",
+                "@type"
+            ],
+            "properties": {
+                "@id": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "@type": {
+                    "type": "string",
+                    "format": "uri",
+                    "const": "skos:ConceptScheme"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                }
+            }
+        },
+        "_OrderedCollectionRef": {
+            "title": "SKOS Ordered Collection reference",
+            "description": "A reference to another SKOS Ordered Collection.",
+            "type": "object",
+            "required": [
+                "@id",
+                "@type"
+            ],
+            "properties": {
+                "@id": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "@type": {
+                    "type": "string",
+                    "format": "uri",
+                    "const": "skos:OrderedCollection"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                }
+            }
+        },
+        "_Concept": {
+            "title": "SKOS Concept JSON-LD Schema",
+            "description": "Definitions of a SKOS Concept as JSON-LD.",
+            "type": "object",
+            "required": [
+                "@context",
+                "@id",
+                "@type",
+                "prefLabel"
+            ],
+            "properties": {
+                "$schema": true,
+                "@context": {
+                    "$ref": "#/definitions/_@context"
+                },
+                "@id": {
+                    "$ref": "#/definitions/_@id"
+                },
+                "@type": {
+                    "type": "array",
+                    "$comment": "@type is an array for constency with other schema that may allow multiple types.",
+                    "items": [
+                        {
+                            "type": "string",
+                            "format": "uri",
+                            "const": "skos:Concept"
+                        }
+                    ]
+                },
+                "prefLabel": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "altLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "hiddenLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "notation": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "definition": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "note": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "editorialNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "historyNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "scopeNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "example": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "broader": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "broaderTransitive": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "narrower": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "narrowerTransitive": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "related": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "broadMatch": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "closeMatch": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "exactMatch": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "narrowMatch": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "relatedMatch": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                },
+                "inScheme": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptSchemeRef"
+                        }
+                    ]
+                },
+                "topConceptOf": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptSchemeRef"
+                        }
+                    ]
+                }
+            }
+        },
+        "_ConceptScheme": {
+            "title": "SKOS Concept Scheme JSON-LD Schema",
+            "description": "Definitions of a SKOS Concept Scheme as JSON-LD.",
+            "type": "object",
+            "required": [
+                "@context",
+                "@id",
+                "@type",
+                "prefLabel"
+            ],
+            "properties": {
+                "$schema": true,
+                "@context": {
+                    "$ref": "#/definitions/_@context"
+                },
+                "@id": {
+                    "$ref": "#/definitions/_@id"
+                },
+                "@type": {
+                    "type": "array",
+                    "$comment": "@type is an array for constency with other schema that may allow multiple types.",
+                    "items": [
+                        {
+                            "type": "string",
+                            "format": "uri",
+                            "const": "skos:ConceptScheme"
+                        }
+                    ]
+                },
+                "prefLabel": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "altLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "hiddenLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "notation": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "definition": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "note": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "editorialNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "historyNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "scopeNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "example": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "hasTopConcept": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                }
+            }
+        },
+        "_Collection": {
+            "title": "SKOS Collection JSON-LD Schema",
+            "description": "Definitions of a SKOS Collection as JSON-LD.",
+            "type": "object",
+            "required": [
+                "@context",
+                "@id",
+                "@type",
+                "prefLabel"
+            ],
+            "properties": {
+                "$schema": true,
+                "@context": {
+                    "$ref": "#/definitions/_@context"
+                },
+                "@id": {
+                    "$ref": "#/definitions/_@id"
+                },
+                "@type": {
+                    "type": "array",
+                    "$comment": "@type is an array for constency with other schema that may allow multiple types.",
+                    "items": [
+                        {
+                            "type": "string",
+                            "format": "uri",
+                            "const": "skos:Collection"
+                        }
+                    ]
+                },
+                "prefLabel": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "altLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "hiddenLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "notation": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "definition": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "note": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "editorialNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "historyNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "scopeNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "example": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "member": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                }
+            }
+        },
+        "_OrderedCollection": {
+            "title": "SKOS Ordered Collection JSON-LD Schema",
+            "description": "Definitions of a SKOS OrderedCollection as JSON-LD.",
+            "type": "object",
+            "required": [
+                "@context",
+                "@id",
+                "@type",
+                "prefLabel"
+            ],
+            "properties": {
+                "$schema": true,
+                "@context": {
+                    "$ref": "#/definitions/_@context"
+                },
+                "@id": {
+                    "$ref": "#/definitions/_@id"
+                },
+                "@type": {
+                    "type": "array",
+                    "$comment": "@type is an array for constency with other schema that may allow multiple types.",
+                    "items": [
+                        {
+                            "type": "string",
+                            "format": "uri",
+                            "const": "skos:OrderedCollection"
+                        }
+                    ]
+                },
+                "prefLabel": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "altLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "hiddenLabel": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "notation": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "definition": {
+                    "$ref": "#/definitions/_internationalizedString"
+                },
+                "note": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "editorialNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "historyNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "scopeNote": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "example": {
+                    "$ref": "#/definitions/_internationalizedStringArray"
+                },
+                "memberList": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptRef"
+                        }
+                    ]
+                }
+            }
+        },
+        "_Container": {
+            "title": "RDFS Container JSON-LD Schema",
+            "description": "Definitions of a RDFS Container as JSON-LD.",
+            "type": "object",
+            "required": [
+                "@context",
+                "@id",
+                "@type",
+                "containerMember"
+            ],
+            "properties": {
+                "$schema": true,
+                "@context": {
+                    "$ref": "#/definitions/_@context"
+                },
+                "@id": {
+                    "$ref": "#/definitions/_@id"
+                },
+                "@type": {
+                    "type": "array",
+                    "$comment": "@type is an array for constency with other schema that may allow multiple types.",
+                    "items": [
+                        {
+                            "type": "string",
+                            "format": "uri",
+                            "const": "rdfs:Container"
+                        }
+                    ]
+                },
+                "containerMember": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_ConceptSchemeRef"
+                        },
+                        {
+                            "$ref": "#/definitions/_OrderedCollectionRef"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
