@@ -1,12 +1,12 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema",
-    "$id": "http://data.scinfo.org.nz/nsdr/def/schema/nsdr-ld/nsdr-core",
-    "title": "NSDR Core JSON:API Schema",
+    "$id": "https://data.scinfo.org.nz/edr/schema/json/1.0/core",
+    "title": "EDR Core JSON:API Schema",
     "description": "Definitions of core components and datatypes to be used in the data element of a JSON:API response.",
     "type": "object",
     "allOf": [
         {
-            "$ref": "./json-api.json"
+            "$ref": "https://data.scinfo.org.nz/edr/schema/json/1.0/api"
         }
     ],
     "properties": {
@@ -34,7 +34,7 @@
     "definitions": {
         "_id": {
             "title": "JSON:API resource identifier",
-            "description": "A universally unique, and persistent, idetifier for the resource (https://jsonapi.org/format/#document-resource-identifier-objects). Values are the NSDR compactUri or the API path including the database UUID.",
+            "description": "A universally unique, and persistent, idetifier for the resource (https://jsonapi.org/format/#document-resource-identifier-objects). Values are the EDR compactUri or the API path including the database UUID.",
             "type": "string",
             "format": "uri"
         },
@@ -56,7 +56,7 @@
             "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\(\\)]*\\)$"
         },
         "_numericValue": {
-            "title": "NSDR numericRange data type",
+            "title": "EDR numericRange data type",
             "description": "A single numeric value with a comparison operator and a unit of measure.",
             "type": "object",
             "required": [
@@ -91,7 +91,7 @@
             }
         },
         "_numericRangeValue": {
-            "title": "NSDR numericRange data type",
+            "title": "EDR numericRange data type",
             "description": "A pair of numeric value with a comparison operator (defining inclusive/exclusive ranges) and a unit of measure.",
             "type": "object",
             "required": [
@@ -205,7 +205,7 @@
                     "if": {
                         "properties": {
                             "type": {
-                                "const": "nsdr:CL_Concept"
+                                "const": "edr:CL_Concept"
                             }
                         }
                     },
@@ -217,7 +217,7 @@
                     "if": {
                         "properties": {
                             "type": {
-                                "const": "nsdr:CL_ConceptScheme"
+                                "const": "edr:CL_ConceptScheme"
                             }
                         }
                     },
@@ -260,7 +260,7 @@
             "properties": {
                 "type": {
                     "$ref": "#/definitions/_type",
-                    "const": "nsdr:CL_Concept"
+                    "const": "edr:CL_Concept"
                 },
                 "id": {
                     "$ref": "#/definitions/_id"
@@ -282,7 +282,7 @@
             "properties": {
                 "type": {
                     "$ref": "#/definitions/_type",
-                    "const": "nsdr:CL_ConceptScheme"
+                    "const": "edr:CL_ConceptScheme"
                 },
                 "id": {
                     "$ref": "#/definitions/_id"
