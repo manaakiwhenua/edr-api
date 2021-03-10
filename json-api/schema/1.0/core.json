@@ -1,0 +1,410 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "$id": "https://data.scinfo.org.nz/edr/schema/json/1.0/core",
+    "title": "EDR Core JSON:API Schema",
+    "description": "Definitions of core components and datatypes to be used in the data element of a JSON:API response.",
+    "type": "object",
+    "allOf": [
+        {
+            "$ref": "https://data.scinfo.org.nz/edr/schema/json/1.0/api"
+        }
+    ],
+    "properties": {
+        "data": {
+            "description": "The document's \"primary data\" is a representation of the resource or collection of resources targeted by a request.",
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/_applicationResource"
+                },
+                {
+                    "description": "An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/_applicationResource"
+                    },
+                    "uniqueItems": true
+                },
+                {
+                    "description": "null if the request is one that might correspond to a single resource, but doesn't currently.",
+                    "type": "null"
+                }
+            ]
+        }
+    },
+    "definitions": {
+        "_id": {
+            "title": "JSON:API resource identifier",
+            "description": "A universally unique, and persistent, idetifier for the resource (https://jsonapi.org/format/#document-resource-identifier-objects). Values are the EDR compactUri or the API path including the database UUID.",
+            "type": "string",
+            "format": "uri"
+        },
+        "_type": {
+            "title": "JSON:API resource type",
+            "description": "The JSON:API type (https://jsonapi.org/format/#document-resource-identifier-objects) of the resource. A human readable label, e.g. a class name, that is an exact semantic match for the value of @type.",
+            "type": "string",
+            "format": "uri"
+        },
+        "_uuid": {
+            "title": "UUID data type",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "_ewkt": {
+            "title": "extended well-known text data type",
+            "description": "A well-known text (https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) geometry with a declared spatial reference system.",
+            "type": "string",
+            "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\(\\)]*\\)$"
+        },
+        "_numericValue": {
+            "title": "EDR numericRange data type",
+            "description": "A single numeric value with a comparison operator and a unit of measure.",
+            "type": "object",
+            "required": [
+                "operator",
+                "value",
+                "unitOfMeasure"
+            ],
+            "properties": {
+                "operator": {
+                    "description": "Comparison operator for numeric values.",
+                    "$comment": "To help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "value": {
+                    "title": "numeric value",
+                    "description": "The value.",
+                    "type": "number"
+                },
+                "unitOfMeasure": {
+                    "$ref": "#/definitions/_CL_ConceptRef"
+                }
+            }
+        },
+        "_numericRangeValue": {
+            "title": "EDR numericRange data type",
+            "description": "A pair of numeric value with a comparison operator (defining inclusive/exclusive ranges) and a unit of measure.",
+            "type": "object",
+            "required": [
+                "operator",
+                "value",
+                "unitOfMeasure"
+            ],
+            "properties": {
+                "operator": {
+                    "title": "Comparison operator for @value.minimum and @value.maximum.",
+                    "description": "The value as a pair of numbers representing the minimum and maximum bounds of the value. Comparison operators used to define inclusive or exclusive ranges.",
+                    "type": "object",
+                    "required": [
+                        "minimum",
+                        "maximum"
+                    ],
+                    "properties": {
+                        "minimum": {
+                            "type": "string",
+                            "default": ">=",
+                            "enum": [
+                                "<",
+                                "<=",
+                                ">",
+                                ">="
+                            ]
+                        },
+                        "maximum": {
+                            "type": "string",
+                            "default": "<=",
+                            "enum": [
+                                "<",
+                                "<=",
+                                ">",
+                                ">="
+                            ]
+                        }
+                    }
+                },
+                "value": {
+                    "title": "numeric range value",
+                    "description": "The value as a pair of numbers representing the minimum and maximum bounds of the value.",
+                    "type": "object",
+                    "required": [
+                        "minimum",
+                        "maximum"
+                    ],
+                    "properties": {
+                        "minimum": {
+                            "type": "number"
+                        },
+                        "maximum": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "unitOfMeasure": {
+                    "$ref": "#/definitions/_CL_ConceptRef"
+                }
+            }
+        },
+        "_measurementValue": {
+            "title": "measure value data type",
+            "description": "A structured method description for a measurement value.",
+            "type": "object",
+            "required": [
+                "technique",
+                "result"
+            ],
+            "properties": {
+                "oneOf": {
+                    "sensor": {
+                        "title": "sensor Property Schema",
+                        "description": "The ID of the method's sensor. Used instead of a function value.",
+                        "$ref": "#/definitions/_CL_ConceptRef"
+                    },
+                    "function": {
+                        "title": "function Property Schema",
+                        "description": "The ID of (and reference to the definition of) the function used to calculate the value. Used instead of a sensor value.",
+                        "$ref": "#/definitions/_CL_ConceptRef"
+                    }
+                },
+                "technique": {
+                    "title": "technique Property Schema",
+                    "description": "The ID of (and reference to the definition of) the value's technique as documented in a manual or report.",
+                    "$ref": "#/definitions/_CL_ConceptRef"
+                },
+                "result": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/_numericValue"
+                        },
+                        {
+                            "$ref": "#/definitions/_numericRangeValue"
+                        }
+                    ]
+                }
+            }
+        },
+        "_applicationResource": {
+            "description": "Application (or domain) resource objects appear in a JSON:API document to represent resources.",
+            "$comment": "'Application resources' override the default data object with resources specific to the domain the schema is being applied to.",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr:CL_Concept"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_CL_Concept"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr:CL_ConceptScheme"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_CL_ConceptScheme"
+                    }
+                }
+            ]
+        },
+        "_applicationResourceRef": {
+            "title": "Resource reference data type",
+            "description": "An object reference to an instance of a resource.",
+            "$comment": "References are a stub of the target resource (\"id\", \"type\" and \"preferredLabel\").",
+            "required": [
+                "type",
+                "id"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/_type"
+                },
+                "id": {
+                    "$ref": "#/definitions/_id"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                }
+            }
+        },
+        "_CL_ConceptRef": {
+            "title": "CL_Concept reference data type",
+            "description": "An object reference to an instance of a CL_Concept.",
+            "$comment": "References are a stub of the target resource (\"id\", \"type\" and \"preferredLabel\").",
+            "required": [
+                "type",
+                "id"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/_type",
+                    "const": "edr:CL_Concept"
+                },
+                "id": {
+                    "$ref": "#/definitions/_id"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                }
+            }
+        },
+        "_CL_ConceptSchemeRef": {
+            "title": "CL_ConceptScheme reference data type",
+            "description": "An object reference to an instance of a CL_ConceptScheme.",
+            "$comment": "References are a stub of the target resource (\"id\", \"type\" and \"preferredLabel\").",
+            "required": [
+                "type",
+                "id"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/_type",
+                    "const": "edr:CL_ConceptScheme"
+                },
+                "id": {
+                    "$ref": "#/definitions/_id"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                }
+            }
+        },
+        "_CL_Concept": {
+            "title": "CL_Concept data type",
+            "description": "An instance of a CL_Concept.",
+            "required": [
+                "type",
+                "id",
+                "preferredLabel"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/_type"
+                },
+                "id": {
+                    "$ref": "#/definitions/_id"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                },
+                "alternativeLabel": {
+                    "type": "string"
+                },
+                "notation": {
+                    "type": "string"
+                },
+                "definition": {
+                    "type": "string"
+                },
+                "editorialNote": {
+                    "type": "string"
+                },
+                "source": {
+                    "$ref": "#/definitions/_CL_ConceptRef"
+                },
+                "equivalentNumeric": {
+                    "$ref": "#/definitions/_numericRangeValue"
+                },
+                "broader": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_CL_ConceptRef"
+                        }
+                    ]
+                },
+                "narrower": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_CL_ConceptRef"
+                        }
+                    ]
+                },
+                "topConceptOf": {
+                    "$ref": "#/definitions/_CL_ConceptSchemeRef"
+                },
+                "inScheme": {
+                    "$ref": "#/definitions/_CL_ConceptSchemeRef"
+                }
+            }
+        },
+        "_CL_ConceptScheme": {
+            "title": "CL_ConceptScheme data type",
+            "description": "An instance of a CL_ConceptScheme.",
+            "required": [
+                "type",
+                "id",
+                "preferredLabel",
+                "definition"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/_type"
+                },
+                "id": {
+                    "$ref": "#/definitions/_id"
+                },
+                "preferredLabel": {
+                    "type": "string"
+                },
+                "alternativeLabel": {
+                    "type": "string"
+                },
+                "definition": {
+                    "type": "string"
+                },
+                "editorialNote": {
+                    "type": "string"
+                },
+                "source": {
+                    "$ref": "#/definitions/_CL_ConceptRef"
+                },
+                "topConcept": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_CL_ConceptRef"
+                        }
+                    ]
+                },
+                "parent": {
+                    "$ref": "#/definitions/_CL_ConceptSchemeRef"
+                },
+                "child": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "$ref": "#/definitions/_CL_ConceptRef"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

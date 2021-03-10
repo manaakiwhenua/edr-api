@@ -1,0 +1,456 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "$id": "https://data.scinfo.org.nz/edr/schema/json/1.0/api",
+    "title": "NSDR JSON Schema for JSON:API Responses",
+    "description": "JSON schema for the basic JSON:API (https://jsonapi.org/) elements to be used by NSDR API responses. Does not include the data element, the behaviour of which will be defined by application specific schema.",
+    "$comment": "Taken from https://jsonapi.org/schema and updated to draft-07 with local tweaks to match nascent NSDR naming convention and requirements (e.g. meta properties).",
+    "oneOf": [
+        {
+            "$ref": "#/definitions/_success"
+        },
+        {
+            "$ref": "#/definitions/_failure"
+        },
+        {
+            "$ref": "#/definitions/_info"
+        }
+    ],
+    "definitions": {
+        "_success": {
+            "type": "object",
+            "required": [
+                "data"
+            ],
+            "properties": {
+                "$schema": true,
+                "data": {
+                    "$ref": "#/definitions/_data"
+                },
+                "included": {
+                    "description": "To reduce the number of HTTP requests, servers **MAY** allow responses that include related resources along with the requested primary resources. Such responses are called \"compound documents\".",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/_resource"
+                    },
+                    "uniqueItems": true
+                },
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                },
+                "links": {
+                    "description": "Link members related to the primary data.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/_links"
+                        },
+                        {
+                            "$ref": "#/definitions/_pagination"
+                        }
+                    ]
+                },
+                "jsonapi": {
+                    "$ref": "#/definitions/_jsonapi"
+                }
+            },
+            "additionalProperties": false
+        },
+        "_failure": {
+            "type": "object",
+            "required": [
+                "errors"
+            ],
+            "properties": {
+                "$schema": true,
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/_error"
+                    },
+                    "uniqueItems": true
+                },
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                },
+                "jsonapi": {
+                    "$ref": "#/definitions/_jsonapi"
+                },
+                "links": {
+                    "$ref": "#/definitions/_links"
+                }
+            },
+            "additionalProperties": false
+        },
+        "_info": {
+            "type": "object",
+            "required": [
+                "meta"
+            ],
+            "properties": {
+                "$schema": true,
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                },
+                "links": {
+                    "$ref": "#/definitions/_links"
+                },
+                "jsonapi": {
+                    "$ref": "#/definitions/_jsonapi"
+                }
+            },
+            "additionalProperties": false
+        },
+        "_meta": {
+            "description": "Non-standard meta-information that can not be represented as an attribute or relationship.",
+            "$comment": "The properties defined here are used by the NSDR.",
+            "type": "object",
+            "properties": {
+                "timeStamp": {
+                    "title": "JSON:API metadata timestamp",
+                    "description": "The time at which the response was compiled on the server.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "numberMatched": {
+                    "title": "JSON:API metadata numberMatched",
+                    "description": "The number of hosted features that matched the requested resource or resources (e.g. from a filtered request).",
+                    "type": "integer"
+                },
+                "numberReturned": {
+                    "title": "JSON:API metadata numberReturned",
+                    "description": "The number of features returned in this response. If numberReturned < numberMatched then it is a paged response.",
+                    "type": "integer"
+                },
+                "namespaces": {
+                    "title": "JSON:API metadata namespaces",
+                    "description": "Profix to URI binding of namespaces used in compact URIs. An oject where each key is the namespace and the value is the URI.",
+                    "type": "object"
+                }
+            },
+            "additionalProperties": true
+        },
+        "_data": {
+            "description": "The document's \"primary data\" is a representation of the resource or collection of resources targeted by a request.",
+            "$comment": "The content of data will be defined by application schema. Each schema should ensure that #/definitions/_resource is supported as a fallback."
+        },
+        "_resource": {
+            "description": "\"Resource objects\" appear in a JSON:API document to represent resources.",
+            "$comment": "Default is a JSON:API resource as defined in https://jsonapi.org/schema. May (will) be over-ridden by application specific schema.",
+            "type": "object",
+            "required": [
+                "type",
+                "id"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "attributes": {
+                    "$ref": "#/definitions/_attributes"
+                },
+                "relationships": {
+                    "$ref": "#/definitions/_relationships"
+                },
+                "links": {
+                    "$ref": "#/definitions/_links"
+                },
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                }
+            },
+            "additionalProperties": true
+        },
+        "_relationshipLinks": {
+            "description": "A resource object **MAY** contain references to other resource objects (\"relationships\"). Relationships may be to-one or to-many. Relationships can be specified by including a member in a resource's links object.",
+            "type": "object",
+            "properties": {
+                "self": {
+                    "description": "A `self` member, whose value is a URL for the relationship itself (a \"relationship URL\"). This URL allows the client to directly manipulate the relationship. For example, it would allow a client to remove an `author` from an `article` without deleting the people resource itself.",
+                    "$ref": "#/definitions/_link"
+                },
+                "related": {
+                    "$ref": "#/definitions/_link"
+                }
+            },
+            "additionalProperties": true
+        },
+        "_links": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/_link"
+            }
+        },
+        "_link": {
+            "description": "A link **MUST** be represented as either: a string containing the link's URL or a link object.",
+            "oneOf": [
+                {
+                    "description": "A string containing the link's URL.",
+                    "type": "string",
+                    "format": "uri-reference"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "href"
+                    ],
+                    "properties": {
+                        "href": {
+                            "description": "A string containing the link's URL.",
+                            "type": "string",
+                            "format": "uri-reference"
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/_meta"
+                        }
+                    }
+                }
+            ]
+        },
+        "_attributes": {
+            "description": "Members of the attributes object (\"attributes\") represent information about the resource object in which it's defined.",
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9](?:[-\\w]*[a-zA-Z0-9])?$": {
+                    "description": "Attributes may contain any valid JSON value."
+                }
+            },
+            "not": {
+                "anyOf": [
+                    {
+                        "required": [
+                            "relationships"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "links"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "id"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "type"
+                        ]
+                    }
+                ]
+            },
+            "additionalProperties": false
+        },
+        "_relationships": {
+            "description": "Members of the relationships object (\"relationships\") represent references from the resource object in which it's defined to other resource objects.",
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9](?:[-\\w]*[a-zA-Z0-9])?$": {
+                    "properties": {
+                        "links": {
+                            "$ref": "#/definitions/_relationshipLinks"
+                        },
+                        "data": {
+                            "description": "Member, whose value represents \"resource linkage\".",
+                            "oneOf": [
+                                {
+                                    "$ref": "#/definitions/_relationshipToOne"
+                                },
+                                {
+                                    "$ref": "#/definitions/_relationshipToMany"
+                                }
+                            ]
+                        },
+                        "meta": {
+                            "$ref": "#/definitions/_meta"
+                        }
+                    },
+                    "anyOf": [
+                        {
+                            "required": [
+                                "data"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "meta"
+                            ]
+                        },
+                        {
+                            "required": [
+                                "links"
+                            ]
+                        }
+                    ],
+                    "not": {
+                        "anyOf": [
+                            {
+                                "required": [
+                                    "id"
+                                ]
+                            },
+                            {
+                                "required": [
+                                    "type"
+                                ]
+                            }
+                        ]
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "_relationshipToOne": {
+            "description": "References to other resource objects in a to-one (\"relationship\"). Relationships can be specified by including a member in a resource's links object.",
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/_empty"
+                },
+                {
+                    "$ref": "#/definitions/_linkage"
+                }
+            ]
+        },
+        "_relationshipToMany": {
+            "description": "An array of objects each containing \"type\" and \"id\" members for to-many relationships.",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/_linkage"
+            },
+            "uniqueItems": true
+        },
+        "_empty": {
+            "description": "Describes an empty to-one relationship.",
+            "type": "null"
+        },
+        "_linkage": {
+            "description": "The \"type\" and \"id\" to non-empty members.",
+            "type": "object",
+            "required": [
+                "type",
+                "id"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                }
+            },
+            "additionalProperties": false
+        },
+        "_pagination": {
+            "type": "object",
+            "properties": {
+                "first": {
+                    "description": "The first page of data",
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/_link"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "last": {
+                    "description": "The last page of data",
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/_link"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "prev": {
+                    "description": "The previous page of data",
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/_link"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "next": {
+                    "description": "The next page of data",
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/_link"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            }
+        },
+        "_jsonapi": {
+            "description": "An object describing the server's implementation",
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "string"
+                },
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                }
+            },
+            "additionalProperties": false
+        },
+        "_error": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "A unique identifier for this particular occurrence of the problem.",
+                    "type": "string"
+                },
+                "links": {
+                    "$ref": "#/definitions/_links"
+                },
+                "status": {
+                    "description": "The HTTP status code applicable to this problem, expressed as a string value.",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "An application-specific error code, expressed as a string value.",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "A short, human-readable summary of the problem. It **SHOULD NOT** change from occurrence to occurrence of the problem, except for purposes of localization.",
+                    "type": "string"
+                },
+                "detail": {
+                    "description": "A human-readable explanation specific to this occurrence of the problem.",
+                    "type": "string"
+                },
+                "source": {
+                    "type": "object",
+                    "properties": {
+                        "pointer": {
+                            "description": "A JSON Pointer [RFC6901] to the associated entity in the request document [e.g. \"/data\" for a primary data object, or \"/data/attributes/title\" for a specific attribute].",
+                            "type": "string"
+                        },
+                        "parameter": {
+                            "description": "A string indicating which query parameter caused the error.",
+                            "type": "string"
+                        }
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/_meta"
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}
