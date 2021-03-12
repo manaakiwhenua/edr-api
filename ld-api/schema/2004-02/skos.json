@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://data.scinfo.org.nz/def/skos/2004/02/schema",
+    "$id": "http://data.scinfo.org.nz/edr/ld-api/schema/2004-02/skos",
     "title": "SKOS JSON-LD Schema",
     "description": "Definitions of SKOS resources as JSON-LD.",
     "oneOf": [
