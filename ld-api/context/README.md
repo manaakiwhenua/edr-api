@@ -1,4 +1,4 @@
-# NSDR-LD Resource Description Framework Schema Docs
+# JSON-LD Context Docs
 
 JSON-LD contexts for OWL/RDF ontologies used by the EDR. These are local documents
 referring to community models. Should the maintainers of those models publish

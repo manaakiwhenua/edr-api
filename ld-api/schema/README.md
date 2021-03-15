@@ -1,4 +1,4 @@
-# NSDR-LD JSON-LD Schema Docs
+# JSON-LD Schema Docs
 
 JSON Schema describing JSON-LD ontologies.
 
