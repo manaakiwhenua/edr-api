@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema",
-    "$id": "http://data.scinfo.org.nz/edr/json-api/schema/0.0/api-feature",
+    "$id": "http://data.scinfo.org.nz/edr/json-api/schema/0.3/api-feature",
     "title": "EDR Feature Schema [Root]",
     "description": "The feature is the standard messaging object across a legacy Environmental Data Repository instance. Features may be real world things, containers or definitions.",
     "$comment": "This is a legacy schema used by the first versions of the NSDR API. Replaced by version 1.0 JSON schema dynamically generated from NSDR constraint sets.",
