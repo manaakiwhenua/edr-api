@@ -1,0 +1,593 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "$id": "http://data.scinfo.org.nz/edr/json-api/schema/0.0/api-constraintset",
+    "type": "object",
+    "title": "EDR DM_ConstraintSet Schema [Root]",
+    "description": "A set of constraints on the structure and content of classes, properties and relationships help in a EDR container. These apply to EDR feature documents structured according to the ./api-constraintset.json schema.",
+    "$comment": "This is a legacy schema used by the first versions of the NSDR API. Replaced by version 1.0 JSON schema.",
+    "required": [
+        "constraintSetUuid",
+        "type",
+        "appInfo",
+        "constraint"
+    ],
+    "properties": {
+        "$schema": {
+            "title": "$schema Property Schema",
+            "$comment": "The JSON schema for the constraint set documnt. Added because \"additionalProperties\": false and therefore a schema reference is a Bad Thing.",
+            "type": "string"
+        },
+        "constraintSetUuid": {
+            "title": "constraintSetUuid Property Schema",
+            "$comment": "The ID of the constraint set.",
+            "$ref": "#$defs/uuid"
+        },
+        "type": {
+            "title": "type [constraint set] Property Schema",
+            "$comment": "The type of the constraint set - currently only 'DM_ConstraintSet'.",
+            "type": "string",
+            "default": "DM_ConstraintSet",
+            "enum": [
+                "DM_ConstraintSet"
+            ]
+        },
+        "constraint": {
+            "title": "class Property Schema",
+            "$comment": "The collection of class constraints defined by this constraint set.",
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "title": "DM_ClassConstraint Class Schema",
+                "type": "object",
+                "required": [
+                    "type",
+                    "name",
+                    "targetClass",
+                    "propertyConstraint",
+                    "relationshipConstraint",
+                    "appInfo"
+                ],
+                "properties": {
+                    "type": {
+                        "title": "type [class constraint] Property Schema",
+                        "$comment": "The type of the class constraint - currently only 'DM_ClassConstraint'.",
+                        "type": "string",
+                        "default": "DM_ClassConstraint",
+                        "enum": [
+                            "DM_ClassConstraint"
+                        ]
+                    },
+                    "name": {
+                        "title": "name [class constraint] Property Schema",
+                        "$comment": "A brief descriptive label for the constraint.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "title": "description [class constraint] Property Schema",
+                        "$comment": "A brief description of the class constraint. Preferably as a haiku.",
+                        "type": "string"
+                    },
+                    "targetClass": {
+                        "title": "targetClass Property Schema",
+                        "type": "string",
+                        "$comment": "The type of class the class constraint applies to.",
+                        "$ref": "#$defs/featureTypeReference"
+                    },
+                    "propertyConstraint": {
+                        "title": "propertyConstraint Property Schema",
+                        "$comment": "The collection of property constraints defined for a class constraint.",
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "title": "DM_PropertyConstraint Class Schema",
+                            "type": "object",
+                            "required": [
+                                "type",
+                                "path",
+                                "constraintComponent",
+                                "appInfo"
+                            ],
+                            "properties": {
+                                "type": {
+                                    "title": "type [DM_PropertyConstraint] Property Schema",
+                                    "$comment": "The type of the property constraint - currently only 'DM_PropertyConstraint'.",
+                                    "type": "string",
+                                    "default": "DM_PropertyConstraint",
+                                    "enum": [
+                                        "DM_PropertyConstraint"
+                                    ]
+                                },
+                                "path": {
+                                    "title": "path [DM_PropertyConstraint] Property Schema",
+                                    "$comment": "The path (property type) the constraint applies to.",
+                                    "$ref": "#$defs/propertyTypeReference"
+                                },
+                                "severity": {
+                                    "title": "severity [DM_PropertyConstraint] Property Schema",
+                                    "$comment": "The severity ('information', 'warning', 'violation') of any violation of this constraint.",
+                                    "type": "string",
+                                    "default": "violation",
+                                    "enum": [
+                                        "information",
+                                        "warning",
+                                        "violation"
+                                    ]
+                                },
+                                "constraintComponent": {
+                                    "title": "constraintComponent [DM_PropertyConstraint] Property Schema",
+                                    "type": "object",
+                                    "required": [
+                                        "minCount"
+                                    ],
+                                    "properties": {
+                                        "dataType": {
+                                            "title": "dataType [DM_PropertyConstraint] Property Schema",
+                                            "$comment": "The expected data type of the property - e.g fm_featuretype:15 (string). Alternative to class.",
+                                            "$ref": "#$defs/featureTypeReference"
+                                        },
+                                        "class": {
+                                            "title": "class [DM_PropertyConstraint] Property Schema",
+                                            "$comment": "The expected class of the property - used when the value is another object, not a literal value. The value must match a DM_ClassConstraint.targetClass value (including [xxx] disambiguators) elsewhere in the constraint set.",
+                                            "$ref": "#$defs/featureTypeReference"
+                                        },
+                                        "minCount": {
+                                            "title": "minCount [DM_PropertyConstraint] Property Schema",
+                                            "$comment": "The minimum number of allowable values of thie property. 0 denotes an optional property.",
+                                            "type": "integer",
+                                            "default": 0
+                                        },
+                                        "maxCount": {
+                                            "title": "maxCount [DM_PropertyConstraint] Property Schema",
+                                            "$comment": "The maximum number of allowable values of thie property. If the property is not present, or the value is null, then an unlimited number of values is allowed.",
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "pattern": {
+                                            "title": "pattern Property Schema",
+                                            "$comment": "The regex pattern the value must conform to. (String data types only.)",
+                                            "type": "string"
+                                        },
+                                        "in": {
+                                            "title": "in Property Schema",
+                                            "$comment": "The concept list that the property's values must must come from. (Concept reference data types only.)",
+                                            "$ref": "#$defs/listReference"
+                                        },
+                                        "maxLength": {
+                                            "title": "maxLength Property Schema",
+                                            "$comment": "The maximum length of a string value. (String data types only.)",
+                                            "type": "number"
+                                        },
+                                        "valueRange": {
+                                            "title": "valueRange Property Schema",
+                                            "$comment": "The range within which a numeric value must fall. (Numeric - literal and structrued - data types only.)",
+                                            "$ref": "#$defs/numericRange"
+                                        },
+                                        "unique": {
+                                            "title": "unique Property Schema",
+                                            "$comment": "Specifies whether a value should be unique globally (throughout the repository) or locally (in the 'host' container.)",
+                                            "type": "string",
+                                            "default": "global",
+                                            "enum": [
+                                                "local",
+                                                "global"
+                                            ]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "appInfo": {
+                                    "title": "appInfo [DM_PropertyConstraint] Property Schema",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "order"
+                                    ],
+                                    "properties": {
+                                        "label": {
+                                            "title": "label Property Schema",
+                                            "$comment": "[Ragnar] The label given to the control on screen.",
+                                            "type": "string"
+                                        },
+                                        "order": {
+                                            "title": "order Property Schema",
+                                            "$commmet": "[Ragnar] The position in the list of properties as presented on screen.",
+                                            "type": "integer"
+                                        },
+                                        "type": {
+                                            "title": "type Property Schema",
+                                            "$comment": "[Ragnar] The HTML 5 control type used to display/edit the value.",
+                                            "type": "string"
+                                        },
+                                        "subType": {
+                                            "title": "subType Property Schema",
+                                            "$comment": "[Ragnar] The HTML 5 control sub-type used to display/edit the value. (Constrained by the control specified in type.)",
+                                            "type": "string"
+                                        },
+                                        "cols": {
+                                            "title": "cols Property Schema",
+                                            "$comment": "[Ragnar] Width, in columns, of a text box control.",
+                                            "type": "integer"
+                                        },
+                                        "rows": {
+                                            "title": "rows Property Schema",
+                                            "$comment": "[Ragnar] Height, in rows, of a text box control.",
+                                            "type": "integer"
+                                        },
+                                        "cssClass": {
+                                            "title": "cssClass Property Schema",
+                                            "$comment": "[Ragnar] CSS class used to style the property control.",
+                                            "type": "string"
+                                        },
+                                        "placeholder": {
+                                            "title": "placeholder Property Schema",
+                                            "$comment": "[Ragnar] An explanatory placeholder value to be used as a tool tip in the form.",
+                                            "type": "array",
+                                            "items": [
+                                                "string"
+                                            ]
+                                        },
+                                        "defaultValue": {
+                                            "title": "defaultValue Property Schema",
+                                            "$comment": "[Ragnar] The default value of a property. Untyped as the value will be an instance of the default value (e.g. a string or numericValue object)."
+                                        },
+                                        "dbConcatenate": {
+                                            "title": "dbConcatenate Property Schema",
+                                            "$comment": "[DB Download Tool] Forces multivalued properties to be concatenated into a single ';' delimited string value.",
+                                            "type": "boolean"
+                                        },
+                                        "dbConceptLabel": {
+                                            "title": "dbConceptLabel [property] Property Schema",
+                                            "$comment": "[DB Download Tool] Template for the form concept labels will take when presented in a download. Values are injected using ${} variables - values match the column names in the nsdr_def cl schema tables. Local property level override.",
+                                            "type": "string",
+                                            "default": "${name} [${code}]"
+                                        }
+                                    },
+                                    "additionalProperties": true
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "relationshipConstraint": {
+                        "title": "relationshipConstraint Property Schema",
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "object",
+                            "title": "DM_RelationshipConstraint Class Schema",
+                            "required": [
+                                "type",
+                                "path",
+                                "constraintComponent",
+                                "appInfo"
+                            ],
+                            "properties": {
+                                "type": {
+                                    "title": "type [DM_RelationshipConstraint] Property Schema",
+                                    "$comment": "The type of the relationship constraint - currently only 'DM_RelationshipConstraint'.",
+                                    "type": "string",
+                                    "default": "DM_RelationshipConstraint",
+                                    "enum": [
+                                        "DM_RelationshipConstraint"
+                                    ]
+                                },
+                                "path": {
+                                    "title": "path [DM_RelationshipConstraint] Property Schema",
+                                    "$comment": "The path (property type) the constraint applies to.",
+                                    "$ref": "#$defs/propertyTypeReference"
+                                },
+                                "severity": {
+                                    "title": "severity [DM_RelationshipConstraint] Property Schema",
+                                    "$comment": "The severity ('information', 'warning', 'violation') of any violation of this constraint.",
+                                    "type": "string",
+                                    "default": "violation",
+                                    "enum": [
+                                        "information",
+                                        "warning",
+                                        "violation"
+                                    ]
+                                },
+                                "constraintComponent": {
+                                    "type": "object",
+                                    "title": "constraintComponent [DM_RelationshipConstraint] Property Schema",
+                                    "required": [
+                                        "class",
+                                        "minCount"
+                                    ],
+                                    "properties": {
+                                        "class": {
+                                            "title": "class [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "The expected class (feature type of the related feature). The value must match a DM_ClassConstraint.targetClass value (including [xxx] disambiguators) elsewhere in the constraint set.",
+                                            "$ref": "#$defs/featureTypeReference"
+                                        },
+                                        "minCount": {
+                                            "title": "minCount [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "The minimum number of allowable related features for this property type. 0 denotes an optional relationship.",
+                                            "type": "integer",
+                                            "default": 0
+                                        },
+                                        "maxCount": {
+                                            "title": "maxCount [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "The minimum number of allowable related features for this property type. If the property is not present, or the value is null, then an unlimited number of values is allowed.",
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "dataType": {
+                                            "title": "dataType [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "The expected data type of the relationsip. E.g fm_featuretype:1091: a reference to a feature in another document, not an inline object.",
+                                            "$ref": "#$defs/featureTypeReference"
+                                        }
+                                    }
+                                },
+                                "appInfo": {
+                                    "title": "appInfo [DM_RelationshipConstraint] Property Schema",
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "required": [
+                                        "order",
+                                        "showInEditorPane",
+                                        "showInFeatureTree"
+                                    ],
+                                    "properties": {
+                                        "label": {
+                                            "title": "label [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "[Ragnar] The label given to the control on screen.",
+                                            "type": "string"
+                                        },
+                                        "order": {
+                                            "title": "order [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "[Ragnar] The position in the list of properties as presented on screen.",
+                                            "type": "integer"
+                                        },
+                                        "showInEditorPane": {
+                                            "title": "showInEditorPane Property Schema",
+                                            "$comment": "[Ragnar] Specifies that the related feature's data entry panel will be shown on the same pane as the 'host' feature.",
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "showInFeatureTree": {
+                                            "title": "showInFeatureTree Property Schema",
+                                            "$comment": "[Ragnar] Specifies that the related feature will be shown as a sub-feature in the feature tree.",
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "cssClass": {
+                                            "title": "cssClass [DM_RelationshipConstraint] Property Schema",
+                                            "$comment": "[Ragnar] CSS class used to style the relationship form element.",
+                                            "type": "string"
+                                        },
+                                        "featureTreeLabel": {
+                                            "title": "featureTreeLabel Property Schema",
+                                            "type": "string",
+                                            "$comment": "[Ragnar] Template for the form labels will take when presented in a feature tree. Values are injected using ${} variables - values are property type references.",
+                                            "examples": [
+                                                "Site: ${fm_propertytype:1679}"
+                                            ]
+                                        },
+                                        "featureTreeOrder": {
+                                            "title": "featureTreeLabel Property Schema",
+                                            "$comment": "[Ragnar] The property value used to order the related features when listed in the feature tree.",
+                                            "type": "string",
+                                            "examples": [
+                                                "fm_propertytype:1673 ASC"
+                                            ],
+                                            "pattern": "^fm_propertytype:([a-zA-Z0-9-_.]+((\\[([a-zA-Z0-9]+)\\])+)?) (ASC|DESC)$"
+                                        }
+                                    },
+                                    "additionalProperties": true
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "appInfo": {
+                        "title": "appInfo Property Schema [Root]",
+                        "$comment": "Information for applications the use this class constraint to validate, parse, present or manipulate data.",
+                        "type:": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "label": {
+                                "title": "label [class constraint] Property Schema",
+                                "$comment": "[Ragnar] A display label for the class when it appears in a menu or on a form.",
+                                "type": "string"
+                            },
+                            "order": {
+                                "title": "order [class constraint] Property Schema",
+                                "$comment": "[Ragnar] [DEPRECATE] The position the class appears in a list of ... um ... makes o sense here, hence deprecate.",
+                                "type": "integer",
+                                "default": 0
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "appInfo": {
+            "title": "appInfo Property Schema [Root]",
+            "$comment": "Information for applications the use this constraint set to validate, parse, present or manipulate data.",
+            "required": [
+                "featureTypeRootClass",
+                "featureTypeDatasetClass"
+            ],
+            "properties": {
+                "featureTypeRootClass": {
+                    "title": "featureTypeRootClass Schema",
+                    "$comment": "Speficies the feature type of the root (top level) class in containers governed by this constraint set.",
+                    "$ref": "#$defs/featureTypeReference",
+                    "default": "fm_featuretype:55"
+                },
+                "featureTypeDatasetClass": {
+                    "title": "featureTypeDatasetClass Property Schema",
+                    "$comment": "Speficies the feature type of the containers governed by this constraint set. E.g. a survey data set 'fm_featuretype:1042'.",
+                    "$ref": "#$defs/featureTypeReference",
+                    "default": "fm_featuretype:1042"
+                },
+                "dbAllowDownload": {
+                    "title": "The dBAllowDownload Property Schema",
+                    "$comment": "[DB Download Tool] Specifies whether downloads of containers governed by this constraint set are permitted.",
+                    "type": "boolean",
+                    "default": false
+                },
+                "dbConceptLabel": {
+                    "title": "dbConceptLabel Property Schema",
+                    "$comment": "[DB Download Tool] Template for the form concept labels will take when presented in a download. Values are injected using ${} variables - values match the column names in the nsdr_def cl schema tables. Global setting. May be overridden at property level.",
+                    "type": "string",
+                    "default": "${name} [${code}]"
+                },
+                "dbERD": {
+                    "title": "The bbERD Schema",
+                    "$comment": "[DB Download Tool] URL of a file, or collection of files, holding DB entity relationship diagrams and other documentation.",
+                    "type": "string",
+                    "examples": [
+                        "https://data.scinfo.org.nz/static/nsdr/database/export/erd/constraint-set-1106-5-0.zip"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "$defs": {
+        "conceptReference": {
+            "title": "conceptReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a concept definition resource. Currently restricted to the cl_concept prefix but ultimately may be any CURI/URI (allows references to external vocabularies).",
+            "type": "string",
+            "pattern": "^cl_concept:([a-zA-Z0-9-_.]+)$"
+        },
+        "listReference": {
+            "title": "listReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a concept list resource. Currently restricted to the cl_conceptlist prefix but ultimately may be any CURI/URI (allows references to external definitions).",
+            "type": "string",
+            "pattern": "^(cl_concept|fm_propertytype)list:([a-zA-Z0-9-_.]+)$"
+        },
+        "featureTypeReference": {
+            "title": "featureTypeReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a feature type definition resource. Currently restricted to the fm_featuretype prefix but ultimately may be any CURI/URI (allows references to external definitions). Structure allows the use of [] disambiguators.",
+            "type": "string",
+            "pattern": "^fm_featuretype:([a-zA-Z0-9-_.]+((\\[([a-zA-Z0-9_]+)\\])+)?)$"
+        },
+        "numericRange": {
+            "title": "numericRange Definition Schema",
+            "$comment": "A numeric range value with comparison operators and a unit of measure.",
+            "type": "object",
+            "required": [
+                "minOp",
+                "minVal",
+                "maxOp",
+                "maxVal",
+                "uom"
+            ],
+            "properties": {
+                "minOp": {
+                    "title": "minOp Property Schema",
+                    "$comment": "Minimum value comparison operator to assert that the range includes or excludes the bounding value and help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "minVal": {
+                    "title": "minVal Property Schema",
+                    "$comment": "The minimum/lower bounding value of the range.",
+                    "type": "number"
+                },
+                "maxOp": {
+                    "title": "maxOp Property Schema",
+                    "$comment": "Maximum value comparison operator to assert that the range includes or excludes the bounding value and help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "maxVal": {
+                    "title": "maxVal Property Schema",
+                    "$comment": "The maximum/upper bounding value of the range.",
+                    "type": "number"
+                },
+                "uom": {
+                    "title": "uom Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the value's unit of measure.",
+                    "$ref": "#$defs/conceptReference"
+                }
+            }
+        },
+        "numericValue": {
+            "title": "numericValue Definition Schema",
+            "$comment": "A single numeric value with a comparison operator and a unit of measure.",
+            "type": "object",
+            "required": [
+                "op",
+                "val",
+                "uom"
+            ],
+            "properties": {
+                "op": {
+                    "title": "op Property Schema",
+                    "$comment": "Comparison operator to help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "val": {
+                    "title": "val Property Schema",
+                    "$comment": "The value.",
+                    "type": "number"
+                },
+                "uom": {
+                    "title": "uom Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the value's unit of measure.",
+                    "$ref": "#$defs/conceptReference"
+                }
+            }
+        },
+        "propertyTypeReference": {
+            "title": "propertyTypeReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a property type definition resource. Currently restricted to the fm_propertytype prefix but ultimately may be any CURI/URI (allows references to external definitions). Structure allows the use of [] disambiguators.",
+            "type": "string",
+            "pattern": "^fm_propertytype:([a-zA-Z0-9-_.]+((\\[([a-zA-Z0-9_]+)\\])+)?)$"
+        },
+        "uuid": {
+            "title": "uuid Definition Schema",
+            "$comment": "The UUID of an object. Values are scoped to the EDR instance and are not for external use.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9-_]+$"
+        }
+    },
+    "additionalProperties": false
+}

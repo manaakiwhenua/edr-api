@@ -1,0 +1,532 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "$id": "http://data.scinfo.org.nz/edr/json-api/schema/0.0/api-feature",
+    "title": "EDR Feature Schema [Root]",
+    "description": "The feature is the standard messaging object across a legacy Environmental Data Repository instance. Features may be real world things, containers or definitions.",
+    "$comment": "This is a legacy schema used by the first versions of the NSDR API. Replaced by version 1.0 JSON schema dynamically generated from NSDR constraint sets.",
+    "type": "object",
+    "required": [
+        "featureType",
+        "featureUuid"
+    ],
+    "properties": {
+        "featureType": {
+            "title": "featureType Property Schema",
+            "$comment": "The ID of (and reference to the definition of) the type of the feature.",
+            "$ref": "#$defs/featureTypeReference"
+        },
+        "featureUuid": {
+            "title": "featureUuid Property Schema",
+            "$comment": "The UUID of the feature.",
+            "$ref": "#$defs/uuid"
+        },
+        "compactURI": {
+            "title": "featureUuid Property Schema",
+            "$comment": "The UUID of the feature.",
+            "$ref": "#$defs/uuid"
+        },
+        "preferredLabel": {
+            "title": "preferredLabel Property Schema",
+            "$comment": "A convenient label for the feature - usually derived from a value, or concatenated values, in the properties array.",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "preferredLocation": {
+            "title": "preferredLocation Property Schema",
+            "$comment": "An Extended Well-known Text WGS84 location for the feature - derived from a location value in the properties array.",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "properties": {
+            "title": "properties Property Schema",
+            "$comment": "The properties of the feature.",
+            "type": [
+                "array",
+                "null"
+            ],
+            "$ref": "#$defs/propertyArray"
+        },
+        "measurements": {
+            "title": "measurements Property Schema",
+            "$comment": "The measurements of the feature.",
+            "type": [
+                "array",
+                "null"
+            ],
+            "$ref": "#$defs/measurementArray"
+        },
+        "relationships": {
+            "title": "relationships Property Schema",
+            "$comment": "An array of related features. These may be identified by a reference (the value of relatedFeatureUuid) or be nested in the relationship object (the value of relatedFeature).",
+            "type": [
+                "array",
+                "null"
+            ],
+            "items": {
+                "title": "relationship Items Schema",
+                "type": "object",
+                "required": [
+                    "relationshipUuid",
+                    "propertyType",
+                    "relatedFeatureType",
+                    "relatedFeatureUuid"
+                ],
+                "properties": {
+                    "relationshipUuid": {
+                        "title": "relationshipUuid Property Schema",
+                        "$comment": "The UUID of the the relationship.",
+                        "$ref": "#$defs/uuid"
+                    },
+                    "propertyType": {
+                        "title": "propertyType Property Schema",
+                        "$comment": "The ID of (and reference to the definition of) the role the target feature plays in the relationship with the source feature.",
+                        "$ref": "#$defs/propertyTypeReference"
+                    },
+                    "relatedFeatureType": {
+                        "title": "relatedFeatureType Property Schema",
+                        "$comment": "The ID of (and reference to the definition of) the type of the related feature.",
+                        "$ref": "#$defs/featureTypeReference"
+                    },
+                    "relatedFeatureUuid": {
+                        "title": "relatedFeatureUuid Property Schema",
+                        "$comment": "The UUID of the related feature.",
+                        "$ref": "#$defs/uuid"
+                    },
+                    "relatedFeature": {
+                        "title": "relatedFeature Property Schema",
+                        "$comment": "The related feature as a whole, or as a useful stub. Allow a complex features to be sent or feteched in a single request.",
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "$ref": "#"
+                    },
+                    "created": {
+                        "title": "created Property Schema [relationship]",
+                        "$comment": "The date and time (optional) that the relationship was created.",
+                        "$ref": "#$defs/iso8601"
+                    },
+                    "createdBy": {
+                        "title": "createdBy Property Schema [relationship]",
+                        "$comment": "The UUID of the operator that created the relationship."
+                    },
+                    "modified": {
+                        "title": "modified Property Schema [relationship]",
+                        "$comment": "The date and time (optional) that the relationship was last modified.",
+                        "$ref": "#$defs/iso8601"
+                    },
+                    "modifiedBy": {
+                        "title": "modifiedBy Property Schema [relationship]",
+                        "$comment": "The UUID of the operator that last modified the relationship."
+                    }
+                }
+            }
+        },
+        "created": {
+            "title": "created Property Schema [feature]",
+            "$comment": "The date and time (optional) that the feature was created.",
+            "$ref": "#$defs/iso8601"
+        },
+        "createdBy": {
+            "title": "createdBy Property Schema [feature]",
+            "$comment": "The UUID of the operator that created the feature."
+        },
+        "modified": {
+            "title": "modified Property Schema [feature]",
+            "$comment": "The date and time (optional) that the feature (including its properties and relationships) was last modified.",
+            "$ref": "#$defs/iso8601"
+        },
+        "modifiedBy": {
+            "title": "modifiedBy Property Schema [feature]",
+            "$comment": "The UUID of the operator that last modified the feature."
+        }
+    },
+    "$defs": {
+        "featureTypeReference": {
+            "title": "featureTypeReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a feature type definition resource. Currently restricted to the fm_featuretype prefix but ultimately may be any CURI/URI (allows references to external definitions). Structure allows the use of [] disambiguators.",
+            "type": "string",
+            "pattern": "^fm_featuretype:([a-zA-Z0-9-_.]+((\\[([a-zA-Z0-9_]+)\\])+)?)$"
+        },
+        "propertyTypeReference": {
+            "title": "propertyTypeReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a property type definition resource. Currently restricted to the fm_propertytype prefix but ultimately may be any CURI/URI (allows references to external definitions). Structure allows the use of [] disambiguators.",
+            "type": "string",
+            "pattern": "^fm_propertytype:([a-zA-Z0-9-_.]+((\\[([a-zA-Z0-9_]+)\\])+)?)$"
+        },
+        "conceptReference": {
+            "title": "conceptReference Definition Schema",
+            "$comment": "An EDR CURI (compact URI) referring to a concept definition resource. Currently restricted to the cl_concept prefix but ultimately may be any CURI/URI (allows references to external vocabularies).",
+            "type": "string",
+            "pattern": "^cl_concept:([a-zA-Z0-9-_.]+)$"
+        },
+        "uuid": {
+            "title": "uuid Definition Schema",
+            "$comment": "The UUID of an object. Values are scoped to the EDR instance and are not for external use.",
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9-_]+$"
+        },
+        "iso8601": {
+            "title": "iso8601 Definition Schema",
+            "$comment": "An ISO8601 formatted date/time value. The time is optional, as are the use of seconds, sub-seconds and timezones (Z or UTC +/- HH). A missing timezone assumes UTC/Zulu (Z) time.",
+            "type": [
+                "string",
+                "null"
+            ],
+            "pattern": "^((?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])(?:T(2[0-3]|[01][0-9]):([0-5][0-9])(?::(([0-5][0-9])(\\.[0-9]+)?))?(Z|((\\+([0][0-9]|[1][1-4])|(\\-([0][0-9]|[1][12])))(?::[0-5][0-9])?))?)?$"
+        },
+        "propertiesArray": {
+            "title": "propertiesArray Definition Schema",
+            "$comment": "Creates a properties key. The value is an array of property objects.",
+            "type": "object",
+            "required": [
+                "properties"
+            ],
+            "properties": {
+                "properties": {
+                    "$ref": "#$defs/propertyArray"
+                }
+            }
+        },
+        "propertyArray": {
+            "title": "propertyArray Definition Schema",
+            "$comment": "An array of property objects.",
+            "type": "array",
+            "items": {
+                "$ref": "#$defs/property"
+            }
+        },
+        "property": {
+            "title": "property Definition Schema",
+            "$comment": "An individual property value.",
+            "type": "object",
+            "required": [
+                "value",
+                "dataType",
+                "propertyType",
+                "propertyUuid"
+            ],
+            "properties": {
+                "value": {
+                    "$comment": "The value of the property. This is a polymorphic type but its value ,ust be one, and only one of the types string, number, numericValue, numericRange, locationPoint and propertiesArray (i.e. another collection of properties).",
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "$ref": "#$defs/numericValue"
+                        },
+                        {
+                            "$ref": "#$defs/numericRange"
+                        },
+                        {
+                            "$ref": "#$defs/locationPoint"
+                        },
+                        {
+                            "$ref": "#$defs/propertiesArray"
+                        }
+                    ]
+                },
+                "dataType": {
+                    "title": "dataType Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the data type of the property.",
+                    "$ref": "#$defs/featureTypeReference"
+                },
+                "propertyType": {
+                    "title": "propertyType Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the property.",
+                    "$ref": "#$defs/propertyTypeReference"
+                },
+                "propertyUuid": {
+                    "title": "propertyUuid Property Schema",
+                    "$comment": "The UUID of the property value.",
+                    "$ref": "#$defs/uuid"
+                },
+                "created": {
+                    "title": "created Property Schema [property]",
+                    "$comment": "The date and time (optional) that the property was created.",
+                    "$ref": "#$defs/iso8601"
+                },
+                "createdBy": {
+                    "title": "createdBy Property Schema [property]",
+                    "$comment": "The UUID of the operator that created the property."
+                },
+                "modified": {
+                    "title": "modified Property Schema [property]",
+                    "$comment": "The date and time (optional) that the property was last modified.",
+                    "$ref": "#$defs/iso8601"
+                },
+                "modifiedBy": {
+                    "title": "modifiedBy Property Schema [property]",
+                    "$comment": "The UUID of the operator that last modified the property."
+                }
+            }
+        },
+        "measurementsArray": {
+            "title": "measurementsArray Definition Schema",
+            "$comment": "Creates a measurements key. The value is an array of measurement objects.",
+            "type": "object",
+            "required": [
+                "measurements"
+            ],
+            "measurements": {
+                "measurements": {
+                    "$ref": "#$defs/measurementArray"
+                }
+            }
+        },
+        "measurementArray": {
+            "title": "measurementArray Definition Schema",
+            "$comment": "An array of measurement objects.",
+            "type": "array",
+            "items": {
+                "$ref": "#$defs/measurement"
+            }
+        },
+        "measurement": {
+            "title": "measurement Definition Schema",
+            "$comment": "An individual measurement value.",
+            "type": "object",
+            "required": [
+                "value",
+                "dataType",
+                "propertyType",
+                "measurementUuid"
+            ],
+            "measurements": {
+                "value": {
+                    "title": "value Property Schema [measurement]",
+                    "$comment": "The value of the measurement. This is a polymorphic type but its value ,ust be one, and only one of the types string, number, numericValue, numericRange, locationPoint and measurementsArray (i.e. another collection of measurements).",
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "$ref": "#$defs/numericValue"
+                        },
+                        {
+                            "$ref": "#$defs/numericRange"
+                        },
+                        {
+                            "$ref": "#$defs/locationPoint"
+                        },
+                        {
+                            "$ref": "#$defs/propertiesArray"
+                        }
+                    ]
+                },
+                "valueTime": {
+                    "title": "value_time Property Schema [measurement]",
+                    "$comment": "The date and time (optional) that the measurement was made.",
+                    "$ref": "#$defs/iso8601"
+                },
+                "valueMethod": {
+                    "title": "value_method Property Schema [measurement]",
+                    "$comment": "The method (technique, sensor) used to make the measurement.",
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#$defs/valueMethod"
+                        }
+                    ]
+                },
+                "dataType": {
+                    "title": "dataType Property Schema [measurement]",
+                    "$comment": "The ID of (and reference to the definition of) the data type of the measurement.",
+                    "$ref": "#$defs/featureTypeReference"
+                },
+                "propertyType": {
+                    "title": "propertyType Property Schema [measurement]",
+                    "$comment": "The ID of (and reference to the definition of) the measurement.",
+                    "$ref": "#$defs/propertyTypeReference"
+                },
+                "measurementUuid": {
+                    "title": "measurementUuid Property Schema",
+                    "$comment": "The UUID of the measurement value.",
+                    "$ref": "#$defs/uuid"
+                },
+                "created": {
+                    "title": "created Property Schema [measurement]",
+                    "$comment": "The date and time (optional) that the measurement was created.",
+                    "$ref": "#$defs/iso8601"
+                },
+                "createdBy": {
+                    "title": "createdBy Property Schema [measurement]",
+                    "$comment": "The UUID of the operator that created the measurement."
+                },
+                "modified": {
+                    "title": "modified Property Schema [measurement]",
+                    "$comment": "The date and time (optional) that the measurement was last modified.",
+                    "$ref": "#$defs/iso8601"
+                },
+                "modifiedBy": {
+                    "title": "modifiedBy Property Schema [measurement]",
+                    "$comment": "The UUID of the operator that last modified the measurement."
+                }
+            }
+        },
+        "locationPoint": {
+            "title": "featureTypeReference Definition Schema",
+            "$comment": "A 2D point location with a declared spatial reference system.",
+            "type": "object",
+            "required": [
+                "x",
+                "y",
+                "srid"
+            ],
+            "properties": {
+                "x": {
+                    "title": "x Property Schema",
+                    "$comment": "The x (longitude, easting, or westing as appropriate to the srid) coordinate value.",
+                    "type": "number"
+                },
+                "y": {
+                    "title": "y Property Schema",
+                    "$comment": "The y (latitude or northing as appropriate to the srid) coordinate value.",
+                    "type": "number"
+                },
+                "srid": {
+                    "title": "srid Property Schema",
+                    "$comment": "The ID number of the SRID as defined by the EPSG (https://spatialreference.org/ref/epsg/) and implemented by PostGIS.",
+                    "type": "string"
+                }
+            }
+        },
+        "numericValue": {
+            "title": "numericValue Definition Schema",
+            "$comment": "A single numeric value with a comparison operator and a unit of measure.",
+            "type": "object",
+            "required": [
+                "op",
+                "val",
+                "uom"
+            ],
+            "properties": {
+                "op": {
+                    "title": "op Property Schema",
+                    "$comment": "Comparison operator to help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "val": {
+                    "title": "val Property Schema",
+                    "$comment": "The value.",
+                    "type": "number"
+                },
+                "uom": {
+                    "title": "uom Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the value's unit of measure.",
+                    "$ref": "#$defs/conceptReference"
+                }
+            }
+        },
+        "numericRange": {
+            "title": "numericRange Definition Schema",
+            "$comment": "A numeric range value with comparison operators and a unit of measure.",
+            "type": "object",
+            "required": [
+                "minOp",
+                "minVal",
+                "maxOp",
+                "maxVal",
+                "uom"
+            ],
+            "properties": {
+                "minOp": {
+                    "title": "minOp Property Schema",
+                    "$comment": "Minimum value comparison operator to assert that the range includes or excludes the bounding value and help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "minVal": {
+                    "title": "minVal Property Schema",
+                    "$comment": "The minimum/lower bounding value of the range.",
+                    "type": "number"
+                },
+                "maxOp": {
+                    "title": "maxOp Property Schema",
+                    "$comment": "Maximum value comparison operator to assert that the range includes or excludes the bounding value and help when searching or comparing values.",
+                    "type": "string",
+                    "default": "=",
+                    "enum": [
+                        "=",
+                        "!=",
+                        "<",
+                        "<=",
+                        ">",
+                        ">=",
+                        "~"
+                    ]
+                },
+                "maxVal": {
+                    "title": "maxVal Property Schema",
+                    "$comment": "The maximum/upper bounding value of the range.",
+                    "type": "number"
+                },
+                "uom": {
+                    "title": "uom Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the value's unit of measure.",
+                    "$ref": "#$defs/conceptReference"
+                }
+            }
+        },
+        "valueMethod": {
+            "title": "valueMethod Definition Schema",
+            "$comment": "A structured method description for a measurement value.",
+            "type": "object",
+            "required": [
+                "technique"
+            ],
+            "properties": {
+                "sensor": {
+                    "title": "sensor Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the method's sensor. Used instead of a function value.",
+                    "$ref": "#$defs/conceptReference"
+                },
+                "technique": {
+                    "title": "technique Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the value's technique.",
+                    "$ref": "#$defs/conceptReference"
+                },
+                "function": {
+                    "title": "function Property Schema",
+                    "$comment": "The ID of (and reference to the definition of) the value's function. Used instead of a sensor value.",
+                    "$ref": "#$defs/conceptReference"
+                }
+            }
+        }
+    }
+}
