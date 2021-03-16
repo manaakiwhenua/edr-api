@@ -55,6 +55,62 @@
             "type": "string",
             "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\(\\)]*\\)$"
         },
+        "_systemTime": {
+            "title": "system time data type",
+            "description": "A pair of date-time values marking the start and end of a time period. If end is null or infinity the the period has not yet finished.",
+            "$comment": "Maps on to the PostgreSQL Periods extention system_time_start and system_time_end.",
+            "type": "object",
+            "required": [
+                "start",
+                "end"
+            ],
+            "properties": {
+                "start": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "end": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "date-time"
+                }
+            }
+        },
+        "_dateOrDateTime": {
+            "title": "date or date-time Property Schema",
+            "description": "A temporal value that may be in either date or a date-time format.",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                {
+                    "type": "string",
+                    "format": "date"
+                }
+            ]
+        },
+        "_literalValue": {
+            "title": "literal value Property Schema",
+            "description": "A literal value for a measurement or property - e.g string or number",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "properties": {
+                "value": {
+                    "type": [
+                        "boolean",
+                        "integer",
+                        "null",
+                        "number",
+                        "string"
+                    ]
+                }
+            }
+        },
         "_numericValue": {
             "title": "EDR numericRange data type",
             "description": "A single numeric value with a comparison operator and a unit of measure.",
@@ -153,43 +209,101 @@
                 }
             }
         },
-        "_measurementValue": {
-            "title": "measure value data type",
-            "description": "A structured method description for a measurement value.",
+        "_method": {
+            "title": "method Property Schema",
+            "description": "A description of the method used to establish a property value. E.g. a lab technique, and/or a sensor or function.",
             "type": "object",
             "required": [
-                "technique",
-                "result"
+                "technique"
             ],
             "properties": {
-                "oneOf": {
-                    "sensor": {
-                        "title": "sensor Property Schema",
-                        "description": "The ID of the method's sensor. Used instead of a function value.",
-                        "$ref": "#/definitions/_CL_ConceptRef"
-                    },
-                    "function": {
-                        "title": "function Property Schema",
-                        "description": "The ID of (and reference to the definition of) the function used to calculate the value. Used instead of a sensor value.",
-                        "$ref": "#/definitions/_CL_ConceptRef"
-                    }
-                },
                 "technique": {
                     "title": "technique Property Schema",
                     "description": "The ID of (and reference to the definition of) the value's technique as documented in a manual or report.",
+                    "$comment": "Is a sub-type of method.",
                     "$ref": "#/definitions/_CL_ConceptRef"
                 },
-                "result": {
-                    "oneOf": [
-                        {
-                            "$ref": "#/definitions/_numericValue"
-                        },
-                        {
-                            "$ref": "#/definitions/_numericRangeValue"
-                        }
-                    ]
+                "sensor": {
+                    "title": "sensor Property Schema",
+                    "description": "The ID of the method's sensor. Used instead of a function value.",
+                    "$comment": "Is a sub-type of method.",
+                    "$ref": "#/definitions/_CL_ConceptRef"
+                },
+                "function": {
+                    "title": "function Property Schema",
+                    "description": "The ID of (and reference to the definition of) the function used to calculate the value. Used instead of a sensor value.",
+                    "$comment": "Is a sub-type of method.",
+                    "$ref": "#/definitions/_CL_ConceptRef"
                 }
             }
+        },
+        "_propertyValue": {
+            "title": "property value data type",
+            "description": "A structured object for a property value that includes method, time and quality metadata.",
+            "type": "object",
+            "required": [
+                "type",
+                "id",
+                "value",
+                "method"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "$ref": "#/definitions/_id"
+                },
+                "valueTime": {
+                    "title": "valueTime Property Schema",
+                    "description": "The date and time (optional) when the value was generated - e.g. when the measurement was made in a laboratory.",
+                    "$ref": "#/definitions/_dateOrDateTime"
+                },
+                "method": {
+                    "$ref": "#/definitions/_method"
+                },
+                "systemTime": {
+                    "$ref": "#/definitions/_systemTime"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr:DT_Numeric"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_numericValue"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr:DT_NumericRange"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_numericRangeValue"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr:DT_Literal"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_literalValue"
+                    }
+                }
+            ]
         },
         "_applicationResource": {
             "description": "Application (or domain) resource objects appear in a JSON:API document to represent resources.",
