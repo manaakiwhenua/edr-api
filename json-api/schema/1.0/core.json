@@ -92,16 +92,6 @@
                 }
             }
         },
-        "_conceptPropertyArray": {
-            "title": "concapet property array data type",
-            "description": "An array structured object for a concept property value that includes method, time and quality metadata.",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_conceptPropertyValue"
-                }
-            ]
-        },
         "_dateOrDateTime": {
             "title": "date or date-time Property Schema",
             "description": "A temporal value that may be in either date or a date-time format.",
@@ -137,16 +127,6 @@
                 }
             }
         },
-        "_dateTimePropertyArray": {
-            "title": "date-time array Property Schema",
-            "description": "An array of date or time values for a measurement or property",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_dateTimePropertyValue"
-                }
-            ]
-        },
         "_ewktLiteral": {
             "title": "extended well-known text data type",
             "description": "A well-known text (https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) geometry with a declared spatial reference system.",
@@ -174,16 +154,6 @@
                 }
             }
         },
-        "_ewktTimePropertyArray": {
-            "title": "EWKT array Property Schema",
-            "description": "An array of EWKT values for a measurement or property",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_ewktPropertyValue"
-                }
-            ]
-        },
         "_integerPropertyValue": {
             "title": "integer value Property Schema",
             "description": "An integer value for a measurement or property",
@@ -204,16 +174,6 @@
                     "type": "integer"
                 }
             }
-        },
-        "_integerPropertyArray": {
-            "title": "integer array Property Schema",
-            "description": "An array of integer values for a measurement or property",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_integerPropertyValue"
-                }
-            ]
         },
         "_methodObject": {
             "title": "method Property Schema",
@@ -263,16 +223,6 @@
                     "type": "number"
                 }
             }
-        },
-        "_numberPropertyArray": {
-            "title": "number array Property Schema",
-            "description": "An array of number values for a measurement or property",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_numberPropertyValue"
-                }
-            ]
         },
         "_numericObject": {
             "title": "EDR numericRange data type",
@@ -326,16 +276,6 @@
                     "const": "edr-def:DT_Numeric"
                 }
             }
-        },
-        "_numericPropertyArray": {
-            "title": "numeric property array data type",
-            "description": "An array of structured object for a numeric value that includes method, time and quality metadata.",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_numericPropertyValue"
-                }
-            ]
         },
         "_numericRangeObject": {
             "title": "EDR numericRange data type",
@@ -417,16 +357,6 @@
                     "const": "edr-def:DT_NumericRange"
                 }
             }
-        },
-        "_numericRangePropertyArray": {
-            "title": "numeric range property array data type",
-            "description": "An array of structured object for a numeric range value that includes method, time and quality metadata.",
-            "type": "array",
-            "items": [
-                {
-                    "$ref": "#/definitions/_numericRangePropertyValue"
-                }
-            ]
         },
         "_propertyObject": {
             "title": "property value data type",
@@ -518,15 +448,27 @@
                 }
             }
         },
-        "_stringPropertyArray": {
-            "title": "string array Property Schema",
-            "description": "An array of string values for a measurement or property",
-            "type": "array",
-            "items": [
+        "_urlPropertyValue": {
+            "title": "URL value Property Schema",
+            "description": "A URL value for a measurement or property",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "allOf": [
                 {
-                    "$ref": "#/definitions/_stringPropertyValue"
+                    "$ref": "#/definitions/_propertyObject"
                 }
-            ]
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:DT_URL"
+                },
+                "value": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
         }
     }
 }
