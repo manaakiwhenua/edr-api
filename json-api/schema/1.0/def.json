@@ -94,7 +94,12 @@
                             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
                         },
                         "alternativeLabel": {
-                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                            "type": "array",
+                            "items": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                                }
+                            ]
                         },
                         "notation": {
                             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
@@ -103,7 +108,12 @@
                             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
                         },
                         "editorialNote": {
-                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                            "type": "array",
+                            "items": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                                }
+                            ]
                         },
                         "equivalentNumeric": {
                             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_numericRangePropertyValue"
@@ -207,13 +217,23 @@
                             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
                         },
                         "alternativeLabel": {
-                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                            "type": "array",
+                            "items": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                                }
+                            ]
                         },
                         "definition": {
                             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
                         },
                         "editorialNote": {
-                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                            "type": "array",
+                            "items": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                                }
+                            ]
                         }
                     }
                 },
