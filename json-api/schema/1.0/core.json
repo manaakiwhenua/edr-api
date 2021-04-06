@@ -463,9 +463,7 @@
             "type": "object",
             "required": [
                 "id",
-                "type",
-                "compactURI",
-                "preferredLabel"
+                "type"
             ],
             "properties": {
                 "type": {
