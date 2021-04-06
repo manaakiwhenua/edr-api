@@ -1,0 +1,279 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "$id": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/def",
+    "title": "EDR Definitions JSON:API Schema",
+    "description": "Definitions of vocabulary components and datatypes to be used in the data element of a JSON:API response.",
+    "type": "object",
+    "allOf": [
+        {
+            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core"
+        }
+    ],
+    "properties": {
+        "data": {
+            "description": "The document's \"primary data\" is a representation of the resource or collection of resources targeted by a request.",
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/_applicationResource"
+                },
+                {
+                    "description": "An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/_applicationResource"
+                    },
+                    "uniqueItems": true
+                },
+                {
+                    "description": "null if the request is one that might correspond to a single resource, but doesn't currently.",
+                    "type": "null"
+                }
+            ]
+        }
+    },
+    "definitions": {
+        "_applicationResource": {
+            "description": "Application (or domain) resource objects appear in a JSON:API document to represent resources.",
+            "$comment": "'Application resources' override the default data object with resources specific to the domain the schema is being applied to.",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr-def:CL_Concept"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_CL_Concept"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "edr-def:CL_ConceptScheme"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/_CL_ConceptScheme"
+                    }
+                }
+            ]
+        },
+        "_CL_Concept": {
+            "title": "CL_Concept data type",
+            "description": "An instance of a CL_Concept.",
+            "required": [
+                "type",
+                "id",
+                "attributes"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_type"
+                },
+                "id": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_id"
+                },
+                "attributes": {
+                    "type": "object",
+                    "required": [
+                        "preferredLabel"
+                    ],
+                    "properties": {
+                        "preferredLabel": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                        },
+                        "alternativeLabel": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                        },
+                        "notation": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                        },
+                        "definition": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                        },
+                        "editorialNote": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                        },
+                        "equivalentNumeric": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_numericRangePropertyValue"
+                        }
+                    }
+                },
+                "relationships": {
+                    "type": "object",
+                    "properties": {
+                        "source": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToOne"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_Concept"
+                                }
+                            }
+                        },
+                        "broader": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToMany"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_Concept"
+                                }
+                            }
+                        },
+                        "narrower": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToMany"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_Concept"
+                                }
+                            }
+                        },
+                        "topConceptOf": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToOne"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_ConceptScheme"
+                                }
+                            }
+                        },
+                        "inScheme": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToOne"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_ConceptScheme"
+                                }
+                            }
+                        }
+                    }
+                },
+                "meta": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_metaObject"
+                }
+            }
+        },
+        "_CL_ConceptScheme": {
+            "title": "CL_ConceptScheme data type",
+            "description": "An instance of a CL_ConceptScheme.",
+            "required": [
+                "type",
+                "id",
+                "attributes"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_type"
+                },
+                "id": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_id"
+                },
+                "attributes": {
+                    "type": "object",
+                    "required": [
+                        "preferredLabel",
+                        "definition"
+                    ],
+                    "properties": {
+                        "preferredLabel": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                        },
+                        "alternativeLabel": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                        },
+                        "definition": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyValue"
+                        },
+                        "editorialNote": {
+                            "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_stringPropertyArray"
+                        }
+                    }
+                },
+                "relationships": {
+                    "type": "object",
+                    "properties": {
+                        "source": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToOne"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_Concept"
+                                }
+                            }
+                        },
+                        "topConcept": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToMany"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_Concept"
+                                }
+                            }
+                        },
+                        "parent": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToOne"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_ConceptScheme"
+                                }
+                            }
+                        },
+                        "child": {
+                            "allOf": [
+                                {
+                                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipToOne"
+                                }
+                            ],
+                            "properties": {
+                                "type": {
+                                    "const": "edr-def:CL_ConceptScheme"
+                                }
+                            }
+                        }
+                    }
+                },
+                "meta": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/core#/definitions/_metaObject"
+                }
+            }
+        }
+    }
+}
