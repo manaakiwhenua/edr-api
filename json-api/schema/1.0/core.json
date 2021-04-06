@@ -9,74 +9,98 @@
             "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api"
         }
     ],
-    "properties": {
-        "data": {
-            "description": "The document's \"primary data\" is a representation of the resource or collection of resources targeted by a request.",
-            "oneOf": [
-                {
-                    "$ref": "#/definitions/_applicationResource"
-                },
-                {
-                    "description": "An array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/_applicationResource"
-                    },
-                    "uniqueItems": true
-                },
-                {
-                    "description": "null if the request is one that might correspond to a single resource, but doesn't currently.",
-                    "type": "null"
-                }
-            ]
-        }
-    },
     "definitions": {
         "_id": {
             "title": "JSON:API resource identifier",
-            "description": "A universally unique, and persistent, idetifier for the resource (https://jsonapi.org/format/#document-resource-identifier-objects). Values are the EDR compactUri or the API path including the database UUID.",
-            "type": "string",
-            "format": "uri"
-        },
-        "_type": {
-            "title": "JSON:API resource type",
-            "description": "The JSON:API type (https://jsonapi.org/format/#document-resource-identifier-objects) of the resource. A human readable label, e.g. a class name, that is an exact semantic match for the value of @type.",
-            "type": "string",
-            "format": "uri"
-        },
-        "_uuid": {
-            "title": "UUID data type",
+            "description": "A universally unique, and persistent, identifier for the resource (https://jsonapi.org/format/#document-resource-identifier-objects). Values are the EDR database UUID.",
             "type": "string",
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         },
-        "_ewkt": {
-            "title": "extended well-known text data type",
-            "description": "A well-known text (https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) geometry with a declared spatial reference system.",
+        "_type": {
+            "title": "JSON:API resource type",
+            "description": "The JSON:API type (https://jsonapi.org/format/#document-resource-identifier-objects) of the resource. A human readable 'cool' compact URI that would exactly match the value of the JSON-LD @type URI.",
             "type": "string",
-            "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\(\\)]*\\)$"
+            "format": "uri"
         },
-        "_systemTime": {
-            "title": "system time data type",
-            "description": "A pair of date-time values marking the start and end of a time period. If end is null or infinity the the period has not yet finished.",
-            "$comment": "Maps on to the PostgreSQL Periods extention system_time_start and system_time_end.",
+        "_metaObject": {
+            "title": "system meta data type",
+            "description": "Metadata about a resource, and its attributes or relationships.",
+            "$comment": "Times map on to the PostgreSQL Periods extention system_time_start and system_time_end.",
             "type": "object",
             "required": [
-                "start",
-                "end"
+                "operatorUuid",
+                "timeStart",
+                "timeEnd"
             ],
             "properties": {
-                "start": {
+                "operatorUuid": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                "timeStart": {
                     "type": "string",
                     "format": "date-time"
                 },
-                "end": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "format": "date-time"
+                "timeEnd": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        {
+                            "type": "string",
+                            "const": "infinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
                 }
             }
+        },
+        "_conceptObject": {
+            "title": "concept property value data type",
+            "description": "A structured object for a concept.",
+            "$comment": "Used when a relationship link to a resource is not required or possible (e.g. the resource is managed by another system, such as a concept or sensor).",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_resourceObject"
+                }
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:CL_Concept"
+                }
+            }
+        },
+        "_conceptPropertyValue": {
+            "title": "concept property value data type",
+            "description": "A structured concept object for a property value that includes method, time and quality metadata.",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                }
+            ],
+            "properties": {
+                "value": {
+                    "$ref": "#/definitions/_conceptObject"
+                }
+            }
+        },
+        "_conceptPropertyArray": {
+            "title": "concapet property array data type",
+            "description": "An array structured object for a concept property value that includes method, time and quality metadata.",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_conceptPropertyValue"
+                }
+            ]
         },
         "_dateOrDateTime": {
             "title": "date or date-time Property Schema",
@@ -92,26 +116,165 @@
                 }
             ]
         },
-        "_literalValue": {
-            "title": "literal value Property Schema",
-            "description": "A literal value for a measurement or property - e.g string or number",
+        "_dateTimePropertyValue": {
+            "title": "date-time value Property Schema",
+            "description": "A date or time value for a measurement or property",
             "type": "object",
             "required": [
                 "value"
             ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                }
+            ],
             "properties": {
+                "type": {
+                    "const": "edr-def:DT_DateTime"
+                },
                 "value": {
-                    "type": [
-                        "boolean",
-                        "integer",
-                        "null",
-                        "number",
-                        "string"
-                    ]
+                    "$ref": "#/definitions/_dateOrDateTime"
                 }
             }
         },
-        "_numericValue": {
+        "_dateTimePropertyArray": {
+            "title": "date-time array Property Schema",
+            "description": "An array of date or time values for a measurement or property",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_dateTimePropertyValue"
+                }
+            ]
+        },
+        "_ewktLiteral": {
+            "title": "extended well-known text data type",
+            "description": "A well-known text (https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) geometry with a declared spatial reference system.",
+            "type": "string",
+            "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\(\\)]*\\)$"
+        },
+        "_ewktPropertyValue": {
+            "title": "EWKT value Property Schema",
+            "description": "An EWKT value for a measurement or property",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                }
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:DT_EWKT"
+                },
+                "value": {
+                    "$ref": "#/definitions/_ewktLiteral"
+                }
+            }
+        },
+        "_ewktTimePropertyArray": {
+            "title": "EWKT array Property Schema",
+            "description": "An array of EWKT values for a measurement or property",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_ewktPropertyValue"
+                }
+            ]
+        },
+        "_integerPropertyValue": {
+            "title": "integer value Property Schema",
+            "description": "An integer value for a measurement or property",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                }
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:DT_Integer"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "_integerPropertyArray": {
+            "title": "integer array Property Schema",
+            "description": "An array of integer values for a measurement or property",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_integerPropertyValue"
+                }
+            ]
+        },
+        "_methodObject": {
+            "title": "method Property Schema",
+            "description": "A description of the method used to establish a property value. E.g. a lab technique, and/or a sensor or function.",
+            "type": "object",
+            "required": [
+                "technique"
+            ],
+            "properties": {
+                "technique": {
+                    "title": "technique Property Schema",
+                    "description": "The ID of (and reference to the definition of) the value's technique as documented in a manual or report.",
+                    "$comment": "Is a sub-type of method.",
+                    "$ref": "#/definitions/_conceptObject"
+                },
+                "sensor": {
+                    "title": "sensor Property Schema",
+                    "description": "The ID of the method's sensor. Used instead of a function value.",
+                    "$comment": "Is a sub-type of method.",
+                    "$ref": "#/definitions/_sensorObject"
+                },
+                "function": {
+                    "title": "function Property Schema",
+                    "description": "The ID of (and reference to the definition of) the function used to calculate the value. Used instead of a sensor value.",
+                    "$comment": "Is a sub-type of method.",
+                    "$ref": "#/definitions/_conceptObject"
+                }
+            }
+        },
+        "_numberPropertyValue": {
+            "title": "number value Property Schema",
+            "description": "An number value for a measurement or property",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                }
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:DT_Number"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "_numberPropertyArray": {
+            "title": "number array Property Schema",
+            "description": "An array of number values for a measurement or property",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_numberPropertyValue"
+                }
+            ]
+        },
+        "_numericObject": {
             "title": "EDR numericRange data type",
             "description": "A single numeric value with a comparison operator and a unit of measure.",
             "type": "object",
@@ -142,11 +305,39 @@
                     "type": "number"
                 },
                 "unitOfMeasure": {
-                    "$ref": "#/definitions/_CL_ConceptRef"
+                    "$ref": "#/definitions/_resourceObject"
                 }
             }
         },
-        "_numericRangeValue": {
+        "_numericPropertyValue": {
+            "title": "numeric value data type",
+            "description": "A structured object for a numeric value that includes method, time and quality metadata.",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                },
+                {
+                    "$ref": "#/definitions/_numericObject"
+                }
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:DT_Numeric"
+                }
+            }
+        },
+        "_numericPropertyArray": {
+            "title": "numeric property array data type",
+            "description": "An array of structured object for a numeric value that includes method, time and quality metadata.",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_numericPropertyValue"
+                }
+            ]
+        },
+        "_numericRangeObject": {
             "title": "EDR numericRange data type",
             "description": "A pair of numeric value with a comparison operator (defining inclusive/exclusive ranges) and a unit of measure.",
             "type": "object",
@@ -205,47 +396,45 @@
                     }
                 },
                 "unitOfMeasure": {
-                    "$ref": "#/definitions/_CL_ConceptRef"
+                    "$ref": "#/definitions/_resourceObject"
                 }
             }
         },
-        "_method": {
-            "title": "method Property Schema",
-            "description": "A description of the method used to establish a property value. E.g. a lab technique, and/or a sensor or function.",
+        "_numericRangePropertyValue": {
+            "title": "numeric range value data type",
+            "description": "A structured object for a numeric range value that includes method, time and quality metadata.",
             "type": "object",
-            "required": [
-                "technique"
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                },
+                {
+                    "$ref": "#/definitions/_numericRangeObject"
+                }
             ],
             "properties": {
-                "technique": {
-                    "title": "technique Property Schema",
-                    "description": "The ID of (and reference to the definition of) the value's technique as documented in a manual or report.",
-                    "$comment": "Is a sub-type of method.",
-                    "$ref": "#/definitions/_CL_ConceptRef"
-                },
-                "sensor": {
-                    "title": "sensor Property Schema",
-                    "description": "The ID of the method's sensor. Used instead of a function value.",
-                    "$comment": "Is a sub-type of method.",
-                    "$ref": "#/definitions/_CL_ConceptRef"
-                },
-                "function": {
-                    "title": "function Property Schema",
-                    "description": "The ID of (and reference to the definition of) the function used to calculate the value. Used instead of a sensor value.",
-                    "$comment": "Is a sub-type of method.",
-                    "$ref": "#/definitions/_CL_ConceptRef"
+                "type": {
+                    "const": "edr-def:DT_NumericRange"
                 }
             }
         },
-        "_propertyValue": {
+        "_numericRangePropertyArray": {
+            "title": "numeric range property array data type",
+            "description": "An array of structured object for a numeric range value that includes method, time and quality metadata.",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_numericRangePropertyValue"
+                }
+            ]
+        },
+        "_propertyObject": {
             "title": "property value data type",
             "description": "A structured object for a property value that includes method, time and quality metadata.",
             "type": "object",
             "required": [
                 "type",
-                "id",
-                "value",
-                "method"
+                "id"
             ],
             "properties": {
                 "type": {
@@ -260,161 +449,24 @@
                     "$ref": "#/definitions/_dateOrDateTime"
                 },
                 "method": {
-                    "$ref": "#/definitions/_method"
+                    "$ref": "#/definitions/_methodObject"
                 },
-                "systemTime": {
-                    "$ref": "#/definitions/_systemTime"
+                "meta": {
+                    "$ref": "#/definitions/_metaObject"
                 }
-            },
-            "allOf": [
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "edr:DT_Numeric"
-                            }
-                        }
-                    },
-                    "then": {
-                        "$ref": "#/definitions/_numericValue"
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "edr:DT_NumericRange"
-                            }
-                        }
-                    },
-                    "then": {
-                        "$ref": "#/definitions/_numericRangeValue"
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "edr:DT_Literal"
-                            }
-                        }
-                    },
-                    "then": {
-                        "$ref": "#/definitions/_literalValue"
-                    }
-                }
-            ]
+            }
         },
-        "_applicationResource": {
-            "description": "Application (or domain) resource objects appear in a JSON:API document to represent resources.",
-            "$comment": "'Application resources' override the default data object with resources specific to the domain the schema is being applied to.",
+        "_resourceObject": {
+            "title": "resource property value data type",
+            "description": "A structured object for a resource.",
+            "$comment": "Used when a relationship link to a resource is not required or possible (e.g. the resource is managed by another system, such as a concept or sensor).",
             "type": "object",
-            "properties": {
-                "type": {
-                    "type": "string"
-                }
-            },
-            "allOf": [
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "edr:CL_Concept"
-                            }
-                        }
-                    },
-                    "then": {
-                        "$ref": "#/definitions/_CL_Concept"
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "edr:CL_ConceptScheme"
-                            }
-                        }
-                    },
-                    "then": {
-                        "$ref": "#/definitions/_CL_ConceptScheme"
-                    }
-                }
-            ]
-        },
-        "_applicationResourceRef": {
-            "title": "Resource reference data type",
-            "description": "An object reference to an instance of a resource.",
-            "$comment": "References are a stub of the target resource (\"id\", \"type\" and \"preferredLabel\").",
             "required": [
-                "type",
-                "id"
-            ],
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "$ref": "#/definitions/_type"
-                },
-                "id": {
-                    "$ref": "#/definitions/_id"
-                },
-                "preferredLabel": {
-                    "type": "string"
-                }
-            }
-        },
-        "_CL_ConceptRef": {
-            "title": "CL_Concept reference data type",
-            "description": "An object reference to an instance of a CL_Concept.",
-            "$comment": "References are a stub of the target resource (\"id\", \"type\" and \"preferredLabel\").",
-            "required": [
-                "type",
-                "id"
-            ],
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "$ref": "#/definitions/_type",
-                    "const": "edr:CL_Concept"
-                },
-                "id": {
-                    "$ref": "#/definitions/_id"
-                },
-                "preferredLabel": {
-                    "type": "string"
-                }
-            }
-        },
-        "_CL_ConceptSchemeRef": {
-            "title": "CL_ConceptScheme reference data type",
-            "description": "An object reference to an instance of a CL_ConceptScheme.",
-            "$comment": "References are a stub of the target resource (\"id\", \"type\" and \"preferredLabel\").",
-            "required": [
-                "type",
-                "id"
-            ],
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "$ref": "#/definitions/_type",
-                    "const": "edr:CL_ConceptScheme"
-                },
-                "id": {
-                    "$ref": "#/definitions/_id"
-                },
-                "preferredLabel": {
-                    "type": "string"
-                }
-            }
-        },
-        "_CL_Concept": {
-            "title": "CL_Concept data type",
-            "description": "An instance of a CL_Concept.",
-            "required": [
-                "type",
                 "id",
+                "type",
+                "compactURI",
                 "preferredLabel"
             ],
-            "additionalProperties": false,
             "properties": {
                 "type": {
                     "$ref": "#/definitions/_type"
@@ -422,103 +474,61 @@
                 "id": {
                     "$ref": "#/definitions/_id"
                 },
+                "compactURI": {
+                    "type": "string",
+                    "format": "uri"
+                },
                 "preferredLabel": {
                     "type": "string"
-                },
-                "alternativeLabel": {
-                    "type": "string"
-                },
-                "notation": {
-                    "type": "string"
-                },
-                "definition": {
-                    "type": "string"
-                },
-                "editorialNote": {
-                    "type": "string"
-                },
-                "source": {
-                    "$ref": "#/definitions/_CL_ConceptRef"
-                },
-                "equivalentNumeric": {
-                    "$ref": "#/definitions/_numericRangeValue"
-                },
-                "broader": {
-                    "type": "array",
-                    "items": [
-                        {
-                            "$ref": "#/definitions/_CL_ConceptRef"
-                        }
-                    ]
-                },
-                "narrower": {
-                    "type": "array",
-                    "items": [
-                        {
-                            "$ref": "#/definitions/_CL_ConceptRef"
-                        }
-                    ]
-                },
-                "topConceptOf": {
-                    "$ref": "#/definitions/_CL_ConceptSchemeRef"
-                },
-                "inScheme": {
-                    "$ref": "#/definitions/_CL_ConceptSchemeRef"
                 }
             }
         },
-        "_CL_ConceptScheme": {
-            "title": "CL_ConceptScheme data type",
-            "description": "An instance of a CL_ConceptScheme.",
-            "required": [
-                "type",
-                "id",
-                "preferredLabel",
-                "definition"
+        "_sensorObject": {
+            "title": "sensor property value data type",
+            "description": "A structured object for a sensor.",
+            "$comment": "Used when a relationship link to a resource is not required or possible (e.g. the resource is managed by another system, such as a concept or sensor).",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_resourceObject"
+                }
             ],
-            "additionalProperties": false,
             "properties": {
                 "type": {
-                    "$ref": "#/definitions/_type"
-                },
-                "id": {
-                    "$ref": "#/definitions/_id"
-                },
-                "preferredLabel": {
-                    "type": "string"
-                },
-                "alternativeLabel": {
-                    "type": "string"
-                },
-                "definition": {
-                    "type": "string"
-                },
-                "editorialNote": {
-                    "type": "string"
-                },
-                "source": {
-                    "$ref": "#/definitions/_CL_ConceptRef"
-                },
-                "topConcept": {
-                    "type": "array",
-                    "items": [
-                        {
-                            "$ref": "#/definitions/_CL_ConceptRef"
-                        }
-                    ]
-                },
-                "parent": {
-                    "$ref": "#/definitions/_CL_ConceptSchemeRef"
-                },
-                "child": {
-                    "type": "array",
-                    "items": [
-                        {
-                            "$ref": "#/definitions/_CL_ConceptRef"
-                        }
-                    ]
+                    "const": "edr-def:SA_Sensor"
                 }
             }
+        },
+        "_stringPropertyValue": {
+            "title": "string value Property Schema",
+            "description": "A string value for a measurement or property",
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/_propertyObject"
+                }
+            ],
+            "properties": {
+                "type": {
+                    "const": "edr-def:DT_String"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "_stringPropertyArray": {
+            "title": "string array Property Schema",
+            "description": "An array of string values for a measurement or property",
+            "type": "array",
+            "items": [
+                {
+                    "$ref": "#/definitions/_stringPropertyValue"
+                }
+            ]
         }
     }
 }
