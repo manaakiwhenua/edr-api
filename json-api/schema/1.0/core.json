@@ -80,8 +80,7 @@
                 "value": {
                     "$ref": "#/definitions/_conceptLiteral"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_dateOrDateTime": {
             "title": "date or date-time Property Schema",
@@ -116,8 +115,7 @@
                 "value": {
                     "$ref": "#/definitions/_dateOrDateTime"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_ewktLiteral": {
             "title": "extended well-known text data type",
@@ -144,8 +142,7 @@
                 "value": {
                     "$ref": "#/definitions/_ewktLiteral"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_integerPropertyValue": {
             "title": "integer value Property Schema",
@@ -166,8 +163,7 @@
                 "value": {
                     "type": "integer"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_methodObject": {
             "title": "method Property Schema",
@@ -216,8 +212,7 @@
                 "value": {
                     "type": "number"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_numericObject": {
             "title": "EDR numericRange data type",
@@ -269,8 +264,7 @@
                 "type": {
                     "const": "edr-def:DT_Numeric"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_numericRangeObject": {
             "title": "EDR numericRange data type",
@@ -350,8 +344,7 @@
                 "type": {
                     "const": "edr-def:DT_NumericRange"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_propertyObject": {
             "title": "property value data type",
@@ -440,8 +433,7 @@
                 "value": {
                     "type": "string"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "_urlPropertyValue": {
             "title": "URL value Property Schema",
@@ -463,8 +455,7 @@
                     "type": "string",
                     "format": "uri"
                 }
-            },
-            "additionalProperties": false
+            }
         }
     }
 }
