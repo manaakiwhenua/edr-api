@@ -399,6 +399,9 @@
                 },
                 "preferredLabel": {
                     "type": "string"
+                },
+                "links": {
+                    "$ref": "https://data.scinfo.org.nz/edr/json-api/schema/1.0/api#/definitions/_relationshipLinks"
                 }
             }
         },
