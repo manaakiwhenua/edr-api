@@ -58,21 +58,11 @@
                 }
             }
         },
-        "_conceptObject": {
+        "_conceptLiteral": {
             "title": "concept property value data type",
-            "description": "A structured object for a concept.",
-            "$comment": "Used when a relationship link to a resource is not required or possible (e.g. the resource is managed by another system, such as a concept or sensor).",
-            "type": "object",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/_resourceObject"
-                }
-            ],
-            "properties": {
-                "type": {
-                    "const": "edr-def:CL_Concept"
-                }
-            }
+            "description": "A literal URI value for a concept.",
+            "type": "string",
+            "format": "uri"
         },
         "_conceptPropertyValue": {
             "title": "concept property value data type",
@@ -88,7 +78,7 @@
             ],
             "properties": {
                 "value": {
-                    "$ref": "#/definitions/_conceptObject"
+                    "$ref": "#/definitions/_conceptLiteral"
                 }
             }
         },
@@ -187,7 +177,7 @@
                     "title": "technique Property Schema",
                     "description": "The ID of (and reference to the definition of) the value's technique as documented in a manual or report.",
                     "$comment": "Is a sub-type of method.",
-                    "$ref": "#/definitions/_conceptObject"
+                    "$ref": "#/definitions/_conceptLiteral"
                 },
                 "sensor": {
                     "title": "sensor Property Schema",
@@ -199,7 +189,7 @@
                     "title": "function Property Schema",
                     "description": "The ID of (and reference to the definition of) the function used to calculate the value. Used instead of a sensor value.",
                     "$comment": "Is a sub-type of method.",
-                    "$ref": "#/definitions/_conceptObject"
+                    "$ref": "#/definitions/_conceptLiteral"
                 }
             }
         },
