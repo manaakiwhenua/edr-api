@@ -131,7 +131,7 @@
             "title": "extended well-known text data type",
             "description": "A well-known text (https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) geometry with a declared spatial reference system.",
             "type": "string",
-            "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\(\\)]*\\)$"
+            "pattern": "^SRID=[0-9]{4,5};(?:MULTI)?(?:POINT|LINE|POLYGON)\\s?\\([0-9\\s,\\.\\-\\(\\)]*\\)$"
         },
         "_ewktPropertyValue": {
             "title": "EWKT value Property Schema",
