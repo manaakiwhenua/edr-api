@@ -388,23 +388,19 @@
         },
         "_resourceObject": {
             "title": "resource property value data type",
-            "description": "A structured object for a resource.",
-            "$comment": "Used when a relationship link to a resource is not required or possible (e.g. the resource is managed by another system, such as a concept or sensor).",
+            "description": "A structured object for a resource. Not a relationship so linking depends on the resources compactURI.",
+            "$comment": "Used when a relationship link to a resource is not required or possible (e.g. the resource is managed by another system, such as a concept or sensor). Type may be used when the target is ambiguous (e.g. not declared in a property object).",
             "type": "object",
             "required": [
-                "id",
-                "type"
+                "compactURI"
             ],
             "properties": {
-                "type": {
-                    "$ref": "#/definitions/_type"
-                },
-                "id": {
-                    "$ref": "#/definitions/_id"
-                },
                 "compactURI": {
                     "type": "string",
                     "format": "uri"
+                },
+                "type": {
+                    "$ref": "#/definitions/_type"
                 },
                 "preferredLabel": {
                     "type": "string"
